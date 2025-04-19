@@ -1,0 +1,25 @@
+name: 📝 Markdown Lint
+
+on:
+  push:
+    paths:
+      - '**/*.md'
+  pull_request:
+    paths:
+      - '**/*.md'
+  workflow_dispatch:
+
+jobs:
+  markdown-lint:
+    name: Lint Markdown Files
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Lint markdown
+      uses: avto-dev/markdown-lint@v1
+      with:
+        config: .markdownlint.yml
+        args: '**/*.md'
