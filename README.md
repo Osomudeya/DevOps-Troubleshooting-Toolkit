@@ -2,13 +2,16 @@
 
 <div align="center">
   <img src="assets/images/repo-banner.png" alt="DevOps Troubleshooting Toolkit Banner" width="800px" />
-  
+
+  <br />
+
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-  [![GitHub stars](https://img.shields.io/github/stars/yourusername/devops-troubleshooting-toolkit.svg)](https://github.com/yourusername/devops-troubleshooting-toolkit/stargazers)
-  [![GitHub forks](https://img.shields.io/github/forks/yourusername/devops-troubleshooting-toolkit.svg)](https://github.com/yourusername/devops-troubleshooting-toolkit/network/members)
-  [![Twitter Follow](https://img.shields.io/twitter/follow/yourtwitterhandle.svg?style=social)](https://twitter.com/yourtwitterhandle)
+  [![GitHub stars](https://img.shields.io/github/stars/Osomudeya/DevOps-Troubleshooting-Toolkit.svg)](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit/stargazers)
+  [![GitHub forks](https://img.shields.io/github/forks/Osomudeya/DevOps-Troubleshooting-Toolkit.svg)](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit/network/members)
+  [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin&style=social)](https://www.linkedin.com/in/osomudeya-zudonu-17290b124/)
 </div>
+
 
 > A comprehensive collection of commands, tools, and methodologies for troubleshooting DevOps environments - from Linux to Kubernetes and beyond.
 
