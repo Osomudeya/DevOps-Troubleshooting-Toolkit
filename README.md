@@ -57,7 +57,7 @@ Jump directly to troubleshooting guides for common platforms:
 | **Linux** | [System Commands](linux/system-commands.md) • [Networking](linux/networking.md) • [Disk Storage](linux/disk-storage.md) • [Process Management](linux/process-management.md) |
 | **Docker** | [Docker Troubleshooting](containers/docker-troubleshooting.md) • [Container Networking](containers/container-networking.md) • [Image Management](containers/image-management.md) |
 | **Kubernetes** | [Cluster Management](kubernetes/cluster-management.md) • [Workload Troubleshooting](kubernetes/workload-troubleshooting.md) • [Kubernetes Networking](kubernetes/kubernetes-networking.md) |
-| **Databases** | [Relational Databases](databases/database-troubleshooting.md)
+| **Databases** | [Database Troubleshooting Commands](databases/database-troubleshooting.md)
 | **Cloud** | [AWS](cloud/aws-troubleshooting.md) • [GCP](cloud/gcp-troubleshooting.md) • [Azure](cloud/azure-troubleshooting.md) |
 
 ## 🔥 Common Issues
