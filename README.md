@@ -84,6 +84,17 @@ Having a specific problem? Jump directly to these common troubleshooting scenari
 - [Persistent Volume Claims Stuck](kubernetes/kubernetes-storage.md#persistent-volume-claim-issues)
 - [I/O Bottlenecks](linux/performance-tuning.md#disk-io-optimization)
 
+
+## 🚀 Getting Started
+
+Navigate through the repository using the directory structure or use GitHub's search function to find specific commands:
+
+```
+# Example: Find all commands related to Kubernetes pods
+# Use GitHub's search or navigate to:
+kubernetes/workloads/pods.md
+```
+
 ## 📂 Content Organization
 
 This repository is organized into technology-specific sections, each with detailed troubleshooting guides:
@@ -110,7 +121,12 @@ Get printable resources to keep handy during troubleshooting sessions:
 ### Local Use
 
 Clone this repository to have the troubleshooting guides available locally:
+```bash
+git clone https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit.git
+cd DevOps-Troubleshooting-Toolkit
+```
 
+### 🧪 Quick Database Connection Test
 ```bash
 # Database connection check
 mysql -h hostname -u username -p -e "SELECT 1"
