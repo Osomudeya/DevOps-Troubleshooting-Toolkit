@@ -2,16 +2,13 @@
 
 <div align="center">
   <img src="assets/images/repo-banner.png" alt="DevOps Troubleshooting Toolkit Banner" width="800px" />
-
-  <br />
-
+  
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-  [![GitHub stars](https://img.shields.io/github/stars/Osomudeya/DevOps-Troubleshooting-Toolkit.svg)](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit/stargazers)
-  [![GitHub forks](https://img.shields.io/github/forks/Osomudeya/DevOps-Troubleshooting-Toolkit.svg)](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit/network/members)
-  [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin&style=social)](https://www.linkedin.com/in/osomudeya-zudonu-17290b124/)
+  [![GitHub stars](https://img.shields.io/github/stars/yourusername/devops-troubleshooting-toolkit.svg)](https://github.com/yourusername/devops-troubleshooting-toolkit/stargazers)
+  [![GitHub forks](https://img.shields.io/github/forks/yourusername/devops-troubleshooting-toolkit.svg)](https://github.com/yourusername/devops-troubleshooting-toolkit/network/members)
+  [![Twitter Follow](https://img.shields.io/twitter/follow/yourtwitterhandle.svg?style=social)](https://twitter.com/yourtwitterhandle)
 </div>
-
 
 > A comprehensive collection of commands, tools, and methodologies for troubleshooting DevOps environments - from Linux to Kubernetes and beyond.
 
@@ -112,56 +109,114 @@ Get printable resources to keep handy during troubleshooting sessions:
 Clone this repository to have the troubleshooting guides available locally:
 
 ```bash
-git clone https://github.com/yourusername/devops-troubleshooting-toolkit.git
-cd devops-troubleshooting-toolkit
+# Database connection check
+mysql -h hostname -u username -p -e "SELECT 1"
+psql -h hostname -U username -c "SELECT 1"
+mongo --host hostname --eval "db.stats()"
 ```
 
-### Using the Scripts
+[View Database Troubleshooting →](databases/database-troubleshooting.md)
 
-Many troubleshooting scripts are included in the [scripts/](scripts/) directory:
+<a name="observability"></a>
+### 📊 Observability
 
 ```bash
-# Make scripts executable
-chmod +x scripts/kubernetes-tools.sh
-
-# Run a script
-./scripts/kubernetes-tools.sh diagnose-pod my-namespace my-pod
+# Check Prometheus targets
+curl -s http://localhost:9090/api/v1/targets | jq .
 ```
 
-## 👥 Contributing
+[View Prometheus and Grafana Guide →](observability/prometheus-and-grafana.md)
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+<a name="cloud"></a>
+### ☁️ Cloud Providers
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on how to contribute.
+- [AWS Troubleshooting →](cloud/aws-troubleshooting.md)
+- [Azure Troubleshooting →](cloud/azure-troubleshooting.md)
+- [GCP Troubleshooting →](cloud/gcp-troubleshooting.md)
+- [Multi-Cloud Strategies →](cloud/multi-cloud-strategies.md)
 
-## 📜 License
+<a name="scenarios"></a>
+### 🧩 Troubleshooting Scenarios
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+Real-world examples to practice your troubleshooting skills:
 
-## 📚 Related Resources
+[View Scenarios →](scenarios/scenarios.md)
 
-### Recommended Reading
-- [Site Reliability Engineering: How Google Runs Production Systems](https://sre.google/sre-book/table-of-contents/)
-- [The Phoenix Project: A Novel about IT, DevOps, and Helping Your Business Win](https://itrevolution.com/product/the-phoenix-project/)
+<a name="scripts"></a>
+### 📜 Useful Scripts
 
-### Online Communities
-- [DevOps Stack Exchange](https://devops.stackexchange.com/)
-- [Kubernetes Slack](https://kubernetes.slack.com/)
-- [Reddit r/devops](https://www.reddit.com/r/devops/)
+Automation scripts for common DevOps tasks:
 
-## ⭐ Star History
+- [Auto-Clone All Repos →](scripts/auto-clone-all-repos.sh)
+- [Auto-Pull All Repos →](scripts/auto-pull-all-repos.sh)
+- [Kubernetes Event Watcher →](scripts/kubernetes-events.sh)
+- [Kubernetes Logs Tailer →](scripts/k8s-tailogs.sh)
+- [Kubernetes Tools Installer →](scripts/kubernetes-tools.sh)
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/devops-troubleshooting-toolkit&type=Date)](https://star-history.com/#yourusername/devops-troubleshooting-toolkit&Date)
+## 📋 Complete File Directory
 
-## 🙏 Acknowledgments
+### Linux
+- [Linux Commands & Troubleshooting](linux/linux-commands.md)
 
-- All the contributors who have invested their time and expertise
-- The DevOps and SRE communities for sharing their knowledge
-- Open source projects that make modern infrastructure possible
+### Containers
+- [Docker Troubleshooting](containers/docker-troubleshooting.md)
+
+### Kubernetes
+- [Kubernetes Troubleshooting](kubernetes/kubernetes-troubleshooting.md)
+
+### Databases
+- [Database Troubleshooting](databases/database-troubleshooting.md)
+
+### Observability
+- [Prometheus and Grafana](observability/prometheus-and-grafana.md)
+
+### Cloud
+- [AWS Troubleshooting](cloud/aws-troubleshooting.md)
+- [Azure Troubleshooting](cloud/azure-troubleshooting.md)
+- [GCP Troubleshooting](cloud/gcp-troubleshooting.md)
+- [Multi-Cloud Strategies](cloud/multi-cloud-strategies.md)
+
+### Scenarios
+- [Troubleshooting Scenarios](scenarios/scenarios.md)
+
+### Scripts
+- [auto-clone-all-repos.sh](scripts/auto-clone-all-repos.sh) - Clone all repositories from an organization
+- [auto-pull-all-repos.sh](scripts/auto-pull-all-repos.sh) - Update all local repositories
+- [k8s-tailogs.sh](scripts/k8s-tailogs.sh) - Stream logs from multiple Kubernetes pods
+- [kubernetes-events.sh](scripts/kubernetes-events.sh) - Monitor Kubernetes events in real-time
+- [kubernetes-tools.sh](scripts/kubernetes-tools.sh) - Install essential Kubernetes tools
+
+## 🌟 How to Contribute
+
+Contributions make this repository better! Whether it's:
+
+1. Adding new commands
+2. Improving existing explanations
+3. Fixing errors
+4. Adding real-world examples
+
+Check out our [Contribution Guide](CONTRIBUTING.md) to get started.
+
+## 🔄 Recently Updated
+
+| File | Last Updated | Description |
+|------|--------------|-------------|
+| [kubernetes-troubleshooting.md](kubernetes/kubernetes-troubleshooting.md) | 2025-04-15 | Added EKS-specific troubleshooting |
+| [aws-troubleshooting.md](cloud/aws-troubleshooting.md) | 2025-04-10 | Added Lambda troubleshooting |
+| [prometheus-and-grafana.md](observability/prometheus-and-grafana.md) | 2025-04-05 | Updated for Prometheus 2.45 |
+
+## 📱 Connect With Me
+
+- Follow me on [Medium](https://medium.com/@osomudeyazudonu)
+- Connect on [LinkedIn](https://www.linkedin.com/in/osomudeya-zudonu-17290b124)
+- Follow on [Twitter](https://twitter.com/irvingpictures)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-<div align="center">
-  <p>If you found this project helpful, please consider giving it a star! ⭐</p>
-  <p>Created with ❤️ by <a href="https://github.com/yourusername">Your Name</a></p>
-</div>
+If you find this repository helpful, please consider giving it a ⭐️ star ⭐️ to help others discover it too!
+
+*Remember: The best troubleshooters aren't those who know all the answers, but those who know where to find them.*
