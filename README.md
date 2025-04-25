@@ -9,6 +9,7 @@
   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
   [![GitHub stars](https://img.shields.io/github/stars/Osomudeya/DevOps-Troubleshooting-Toolkit.svg)](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit/stargazers)
   [![GitHub forks](https://img.shields.io/github/forks/Osomudeya/DevOps-Troubleshooting-Toolkit.svg)](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit/network/members)
+   [![GitHub downloads](https://img.shields.io/github/downloads/Osomudeya/DevOps-Troubleshooting-Toolkit/total.svg)](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit/releases)
   [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin&style=social)](https://www.linkedin.com/in/osomudeya-zudonu-17290b124/)
 </div>
 
