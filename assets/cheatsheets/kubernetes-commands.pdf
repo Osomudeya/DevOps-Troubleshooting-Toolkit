@@ -1,0 +1,384 @@
+# Kubernetes Commands Cheatsheet
+*DevOps Troubleshooting Toolkit*
+
+## ☸️ Cluster Management
+
+### Cluster Information
+```bash
+# Cluster info
+kubectl cluster-info                    # Cluster endpoints
+kubectl cluster-info dump              # Detailed cluster info
+kubectl version                        # Client/server versions
+kubectl config view                    # View kubeconfig
+kubectl config current-context         # Current context
+kubectl config get-contexts            # List all contexts
+kubectl config use-context context-name # Switch context
+
+# Node management
+kubectl get nodes                      # List nodes
+kubectl get nodes -o wide             # Detailed node info
+kubectl describe node node-name       # Node details
+kubectl top node                      # Node resource usage
+kubectl cordon node-name              # Mark node unschedulable
+kubectl uncordon node-name            # Mark node schedulable
+kubectl drain node-name               # Drain node for maintenance
+```
+
+## 🏗️ Workload Management
+
+### Pods
+```bash
+# Basic pod operations
+kubectl get pods                       # List pods in current namespace
+kubectl get pods -A                   # List all pods in all namespaces
+kubectl get pods -o wide              # Show more details
+kubectl get pods --show-labels        # Show labels
+kubectl get pods -l app=nginx         # Filter by label
+kubectl get pods --field-selector=status.phase=Running
+
+# Pod lifecycle
+kubectl run nginx --image=nginx       # Create pod
+kubectl run test --image=alpine -it --rm # Interactive temporary pod
+kubectl delete pod pod-name           # Delete pod
+kubectl delete pods --all             # Delete all pods
+
+# Pod information
+kubectl describe pod pod-name          # Detailed pod info
+kubectl logs pod-name                  # Pod logs
+kubectl logs -f pod-name               # Follow logs
+kubectl logs pod-name -c container     # Container logs
+kubectl logs --previous pod-name       # Previous container logs
+kubectl logs --tail=50 pod-name        # Last 50 log lines
+kubectl logs --since=1h pod-name       # Logs from last hour
+
+# Pod debugging
+kubectl exec -it pod-name -- bash      # Interactive shell
+kubectl exec pod-name -- command       # Execute command
+kubectl exec -it pod-name -c container -- bash # Multi-container pod
+kubectl port-forward pod-name 8080:80  # Port forwarding
+kubectl cp file.txt pod-name:/tmp/     # Copy files to pod
+kubectl cp pod-name:/tmp/file.txt ./   # Copy files from pod
+```
+
+### Deployments
+```bash
+# Deployment management
+kubectl get deployments               # List deployments
+kubectl describe deployment app       # Deployment details
+kubectl create deployment app --image=nginx # Create deployment
+kubectl delete deployment app         # Delete deployment
+
+# Scaling
+kubectl scale deployment app --replicas=5 # Scale deployment
+kubectl autoscale deployment app --min=2 --max=10 --cpu-percent=80
+
+# Rolling updates
+kubectl set image deployment/app container=nginx:1.20 # Update image
+kubectl rollout status deployment/app # Check rollout status
+kubectl rollout history deployment/app # Rollout history
+kubectl rollout undo deployment/app   # Rollback deployment
+kubectl rollout undo deployment/app --to-revision=2 # Rollback to specific revision
+kubectl rollout restart deployment/app # Restart deployment
+
+# Deployment strategies
+kubectl patch deployment app -p '{"spec":{"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxUnavailable":1,"maxSurge":1}}}}'
+```
+
+### Services
+```bash
+# Service management
+kubectl get services                   # List services
+kubectl get svc                       # Short form
+kubectl describe service service-name # Service details
+kubectl delete service service-name   # Delete service
+
+# Service types
+kubectl expose deployment app --port=80 --type=ClusterIP # ClusterIP
+kubectl expose deployment app --port=80 --type=NodePort  # NodePort
+kubectl expose deployment app --port=80 --type=LoadBalancer # LoadBalancer
+
+# Service debugging
+kubectl get endpoints                  # List endpoints
+kubectl describe endpoints service-name # Endpoint details
+kubectl port-forward service/app 8080:80 # Port forward to service
+```
+
+## 🏷️ Configuration Management
+
+### ConfigMaps
+```bash
+# ConfigMap operations
+kubectl get configmaps                 # List ConfigMaps
+kubectl get cm                        # Short form
+kubectl describe configmap config-name # ConfigMap details
+kubectl delete configmap config-name  # Delete ConfigMap
+
+# Create ConfigMaps
+kubectl create configmap app-config --from-literal=key=value
+kubectl create configmap app-config --from-file=config.properties
+kubectl create configmap app-config --from-file=configs/
+kubectl create configmap app-config --from-env-file=.env
+
+# Edit ConfigMaps
+kubectl edit configmap config-name     # Edit in default editor
+kubectl patch configmap config-name -p '{"data":{"key":"new-value"}}'
+```
+
+### Secrets
+```bash
+# Secret operations
+kubectl get secrets                    # List secrets
+kubectl describe secret secret-name    # Secret details (data hidden)
+kubectl delete secret secret-name     # Delete secret
+
+# Create secrets
+kubectl create secret generic app-secret --from-literal=password=secret123
+kubectl create secret generic app-secret --from-file=ssh-privatekey=~/.ssh/id_rsa
+kubectl create secret docker-registry regcred --docker-server=server --docker-username=user --docker-password=pass
+
+# Decode secrets
+kubectl get secret secret-name -o jsonpath='{.data.password}' | base64 -d
+kubectl get secret secret-name -o yaml # View secret YAML
+```
+
+## 🌐 Networking
+
+### Ingress
+```bash
+# Ingress management
+kubectl get ingress                    # List ingress
+kubectl get ing                       # Short form
+kubectl describe ingress ingress-name # Ingress details
+kubectl delete ingress ingress-name   # Delete ingress
+
+# Ingress troubleshooting
+kubectl get ingressclass              # List ingress classes
+kubectl logs -n ingress-nginx deployment/ingress-nginx-controller
+```
+
+### Network Policies
+```bash
+# Network policy management
+kubectl get networkpolicies           # List network policies
+kubectl get netpol                   # Short form
+kubectl describe networkpolicy policy-name # Policy details
+kubectl delete networkpolicy policy-name   # Delete policy
+```
+
+## 💾 Storage Management
+
+### Persistent Volumes
+```bash
+# PV operations
+kubectl get persistentvolumes         # List PVs
+kubectl get pv                       # Short form
+kubectl describe pv pv-name          # PV details
+kubectl delete pv pv-name            # Delete PV
+
+# PVC operations
+kubectl get persistentvolumeclaims    # List PVCs
+kubectl get pvc                      # Short form
+kubectl describe pvc pvc-name        # PVC details
+kubectl delete pvc pvc-name          # Delete PVC
+
+# Storage classes
+kubectl get storageclasses           # List storage classes
+kubectl get sc                      # Short form
+kubectl describe storageclass sc-name # Storage class details
+```
+
+## 🔐 Security & RBAC
+
+### RBAC
+```bash
+# Role and RoleBinding
+kubectl get roles                     # List roles
+kubectl get rolebindings             # List role bindings
+kubectl describe role role-name      # Role details
+kubectl describe rolebinding binding-name # Role binding details
+
+# ClusterRole and ClusterRoleBinding
+kubectl get clusterroles            # List cluster roles
+kubectl get clusterrolebindings     # List cluster role bindings
+kubectl describe clusterrole role-name # Cluster role details
+
+# Service accounts
+kubectl get serviceaccounts         # List service accounts
+kubectl get sa                     # Short form
+kubectl describe serviceaccount sa-name # Service account details
+
+# Check permissions
+kubectl auth can-i create pods      # Check if you can create pods
+kubectl auth can-i create pods --as=user # Check for specific user
+kubectl auth can-i create pods --as=system:serviceaccount:default:sa-name
+```
+
+## 📊 Monitoring & Debugging
+
+### Resource Usage
+```bash
+# Resource metrics
+kubectl top nodes                     # Node resource usage
+kubectl top pods                      # Pod resource usage
+kubectl top pods -A                   # All namespaces
+kubectl top pods --sort-by=cpu        # Sort by CPU
+kubectl top pods --sort-by=memory     # Sort by memory
+
+# Events
+kubectl get events                    # Recent events
+kubectl get events --sort-by=.metadata.creationTimestamp # Sorted events
+kubectl get events --field-selector type=Warning # Warning events only
+kubectl get events --watch            # Watch events in real-time
+```
+
+### Troubleshooting
+```bash
+# Debug pods
+kubectl describe pod pod-name         # Detailed pod information
+kubectl logs pod-name --previous      # Previous container logs
+kubectl exec -it pod-name -- /bin/sh  # Interactive shell
+kubectl debug pod-name --image=busybox # Debug with ephemeral container
+
+# Debug nodes
+kubectl describe node node-name       # Node information
+kubectl get pods --field-selector spec.nodeName=node-name # Pods on node
+
+# Debug services
+kubectl get endpoints service-name    # Service endpoints
+kubectl describe service service-name # Service details
+kubectl port-forward service/service-name 8080:80 # Test service access
+
+# Debug networking
+kubectl exec -it pod-name -- nslookup kubernetes.default # DNS test
+kubectl exec -it pod-name -- wget -qO- http://service-name # Service connectivity
+kubectl exec -it pod-name -- netstat -tlpn # Check listening ports
+```
+
+## 🔧 Advanced Operations
+
+### Jobs and CronJobs
+```bash
+# Jobs
+kubectl get jobs                      # List jobs
+kubectl describe job job-name         # Job details
+kubectl delete job job-name           # Delete job
+kubectl create job test --image=busybox -- echo "Hello World"
+
+# CronJobs
+kubectl get cronjobs                  # List CronJobs
+kubectl get cj                       # Short form
+kubectl describe cronjob cronjob-name # CronJob details
+kubectl delete cronjob cronjob-name   # Delete CronJob
+```
+
+### DaemonSets and StatefulSets
+```bash
+# DaemonSets
+kubectl get daemonsets               # List DaemonSets
+kubectl get ds                      # Short form
+kubectl describe daemonset ds-name  # DaemonSet details
+kubectl rollout status daemonset/ds-name # Check rollout
+
+# StatefulSets
+kubectl get statefulsets            # List StatefulSets
+kubectl get sts                    # Short form
+kubectl describe statefulset sts-name # StatefulSet details
+kubectl scale statefulset sts-name --replicas=5 # Scale StatefulSet
+```
+
+## 🏷️ Namespaces
+
+### Namespace Management
+```bash
+# Basic operations
+kubectl get namespaces               # List namespaces
+kubectl get ns                     # Short form
+kubectl describe namespace ns-name  # Namespace details
+kubectl create namespace new-ns     # Create namespace
+kubectl delete namespace old-ns     # Delete namespace
+
+# Working with namespaces
+kubectl get pods -n namespace-name  # Pods in specific namespace
+kubectl get pods --all-namespaces   # Pods in all namespaces
+kubectl config set-context --current --namespace=namespace-name # Set default namespace
+```
+
+## 📋 Quick Reference
+
+### Essential One-Liners
+```bash
+# Get all resources in namespace
+kubectl get all -n namespace-name
+
+# Delete all pods in namespace
+kubectl delete pods --all -n namespace-name
+
+# Get pod CPU and memory requests/limits
+kubectl describe pods | grep -E "Requests|Limits"
+
+# Get all pods with their node assignments
+kubectl get pods -o wide --all-namespaces
+
+# Find pods consuming most CPU
+kubectl top pods --all-namespaces --sort-by=cpu
+
+# Find pods consuming most memory
+kubectl top pods --all-namespaces --sort-by=memory
+
+# Get all pods not in Running state
+kubectl get pods --all-namespaces --field-selector=status.phase!=Running
+
+# Get all persistent volumes and their status
+kubectl get pv -o custom-columns=NAME:.metadata.name,STATUS:.status.phase,CLAIM:.spec.claimRef.name
+
+# Get all services and their endpoints
+kubectl get svc,ep
+
+# Find all pods using a specific image
+kubectl get pods --all-namespaces -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.containers[*].image}{"\n"}{end}' | grep nginx
+```
+
+### Resource Shortcuts
+```bash
+# Common abbreviations
+po    = pods
+svc   = services
+ns    = namespaces
+no    = nodes
+pv    = persistentvolumes
+pvc   = persistentvolumeclaims
+cm    = configmaps
+ds    = daemonsets
+deploy = deployments
+rs    = replicasets
+sts   = statefulsets
+ing   = ingress
+netpol = networkpolicies
+```
+
+### Output Formats
+```bash
+# Different output formats
+kubectl get pods -o wide           # Additional columns
+kubectl get pods -o yaml           # YAML format
+kubectl get pods -o json           # JSON format
+kubectl get pods -o name           # Just names
+kubectl get pods -o custom-columns=NAME:.metadata.name,STATUS:.status.phase
+kubectl get pods -o jsonpath='{.items[*].metadata.name}'
+```
+
+### Labels and Selectors
+```bash
+# Working with labels
+kubectl get pods --show-labels              # Show all labels
+kubectl get pods -l app=nginx               # Filter by label
+kubectl get pods -l 'app in (nginx,apache)' # Multiple values
+kubectl get pods -l app!=nginx              # Not equal
+kubectl label pod pod-name tier=frontend    # Add label
+kubectl label pod pod-name tier-            # Remove label
+kubectl annotate pod pod-name description="My pod" # Add annotation
+```
+
+---
+
+*For more detailed guides, visit: [DevOps Troubleshooting Toolkit](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit)*

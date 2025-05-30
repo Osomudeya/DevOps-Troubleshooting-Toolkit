@@ -1,0 +1,304 @@
+# Docker Commands Cheatsheet
+*DevOps Troubleshooting Toolkit*
+
+## 🐳 Container Management
+
+### Basic Container Operations
+```bash
+# List containers
+docker ps                    # Running containers
+docker ps -a                 # All containers
+docker ps -q                 # Container IDs only
+
+# Run containers
+docker run -d nginx          # Run in background
+docker run -it ubuntu bash   # Interactive mode
+docker run -p 8080:80 nginx  # Port mapping
+docker run --name web nginx  # Named container
+docker run --rm alpine       # Auto-remove when stopped
+
+# Container lifecycle
+docker start container_name   # Start stopped container
+docker stop container_name    # Stop running container
+docker restart container_name # Restart container
+docker pause container_name   # Pause container
+docker unpause container_name # Unpause container
+docker kill container_name    # Force kill container
+docker rm container_name      # Remove container
+docker rm -f container_name   # Force remove running container
+```
+
+### Container Information & Debugging
+```bash
+# Inspect containers
+docker inspect container_name           # Detailed info
+docker logs container_name              # View logs
+docker logs -f container_name           # Follow logs
+docker logs --tail 50 container_name    # Last 50 lines
+docker logs --since 1h container_name   # Logs from last hour
+
+# Execute commands in containers
+docker exec -it container_name bash     # Interactive shell
+docker exec container_name ls -la       # Run single command
+docker exec -u root container_name bash # Execute as root
+
+# Container statistics
+docker stats                            # Real-time stats
+docker stats container_name             # Stats for specific container
+docker top container_name               # Running processes
+```
+
+## 🖼️ Image Management
+
+### Basic Image Operations
+```bash
+# List images
+docker images                # All images
+docker images -q             # Image IDs only
+docker images --filter dangling=true  # Unused images
+
+# Pull/Push images
+docker pull nginx:latest     # Pull image
+docker pull nginx:1.20       # Pull specific version
+docker push myimage:tag      # Push to registry
+docker tag image:tag new:tag # Tag image
+
+# Remove images
+docker rmi image_name         # Remove image
+docker rmi -f image_name      # Force remove
+docker image prune            # Remove unused images
+docker image prune -a         # Remove all unused images
+```
+
+### Building Images
+```bash
+# Build from Dockerfile
+docker build .                          # Build from current directory
+docker build -t myapp:latest .          # Build with tag
+docker build -f Dockerfile.dev .        # Use specific Dockerfile
+docker build --no-cache .               # Build without cache
+docker build --build-arg VAR=value .    # Pass build arguments
+
+# Dockerfile best practices
+FROM alpine:latest           # Use specific versions
+RUN apk add --no-cache curl  # Clean package managers
+COPY requirements.txt .      # Copy files efficiently
+RUN pip install -r requirements.txt
+COPY . .                     # Copy application last
+EXPOSE 8080                  # Document ports
+USER nonroot                 # Use non-root user
+CMD ["python", "app.py"]     # Use exec form
+```
+
+## 🌐 Network Management
+
+### Network Operations
+```bash
+# List networks
+docker network ls            # All networks
+docker network inspect bridge # Inspect network
+
+# Create networks
+docker network create mynet               # Create bridge network
+docker network create -d bridge mynet     # Specify driver
+docker network create --subnet=172.20.0.0/16 mynet
+
+# Connect containers to networks
+docker run --network mynet alpine         # Run with network
+docker network connect mynet container    # Connect existing container
+docker network disconnect mynet container # Disconnect container
+
+# Remove networks
+docker network rm mynet      # Remove network
+docker network prune         # Remove unused networks
+```
+
+### Network Troubleshooting
+```bash
+# Test connectivity
+docker exec container ping google.com     # Test external connectivity
+docker exec container nslookup service    # DNS resolution
+docker exec container netstat -tulpn      # Check ports
+docker exec container ss -tulpn           # Check sockets
+
+# Port management
+docker port container_name               # Show port mappings
+docker run -P nginx                      # Map all exposed ports
+docker run -p 127.0.0.1:8080:80 nginx  # Bind to specific IP
+```
+
+## 📁 Volume Management
+
+### Volume Operations
+```bash
+# List volumes
+docker volume ls             # All volumes
+docker volume inspect vol   # Volume details
+
+# Create volumes
+docker volume create mydata              # Create named volume
+docker volume create --driver local mydata
+
+# Use volumes
+docker run -v mydata:/data alpine        # Named volume
+docker run -v /host/path:/container/path alpine  # Bind mount
+docker run -v $(pwd):/app alpine         # Current directory
+docker run --mount source=vol,target=/data alpine  # Mount syntax
+
+# Remove volumes
+docker volume rm mydata      # Remove volume
+docker volume prune          # Remove unused volumes
+```
+
+## 🧹 System Cleanup
+
+### Cleanup Commands
+```bash
+# Clean up everything
+docker system prune          # Remove unused data
+docker system prune -a       # Remove all unused data
+docker system prune --volumes # Include volumes
+
+# Specific cleanup
+docker container prune       # Remove stopped containers
+docker image prune          # Remove unused images
+docker image prune -a       # Remove all unused images
+docker volume prune         # Remove unused volumes
+docker network prune        # Remove unused networks
+
+# Show disk usage
+docker system df            # Show space usage
+docker system df -v         # Verbose space usage
+```
+
+## 🔧 Docker Compose
+
+### Basic Compose Commands
+```bash
+# Start services
+docker-compose up            # Start in foreground
+docker-compose up -d         # Start in background
+docker-compose up --build   # Rebuild images
+docker-compose up service   # Start specific service
+
+# Manage services
+docker-compose start         # Start stopped services
+docker-compose stop          # Stop services
+docker-compose restart       # Restart services
+docker-compose pause         # Pause services
+docker-compose unpause       # Unpause services
+
+# View information
+docker-compose ps            # List services
+docker-compose logs          # View logs
+docker-compose logs -f       # Follow logs
+docker-compose logs service  # Logs for specific service
+
+# Cleanup
+docker-compose down          # Stop and remove containers
+docker-compose down -v       # Also remove volumes
+docker-compose down --rmi all # Also remove images
+```
+
+## 🔍 Troubleshooting
+
+### Debug Commands
+```bash
+# Container not starting
+docker logs container_name              # Check logs
+docker inspect container_name           # Check configuration
+docker events                          # Monitor Docker events
+docker run --rm -it image_name bash    # Test image interactively
+
+# Performance issues
+docker stats                           # Monitor resource usage
+docker exec container_name ps aux      # Check processes
+docker exec container_name df -h       # Check disk space
+docker exec container_name free -h     # Check memory
+
+# Network issues
+docker network ls                      # List networks
+docker port container_name             # Check port mappings
+docker exec container_name ping host   # Test connectivity
+docker exec container_name nslookup domain # Test DNS
+
+# Permission issues
+docker exec -u root container_name bash # Run as root
+docker run --privileged image_name     # Run with privileges
+ls -la /var/run/docker.sock           # Check Docker socket permissions
+```
+
+### Common Issues & Solutions
+```bash
+# "Permission denied" errors
+sudo usermod -aG docker $USER          # Add user to docker group
+sudo chmod 666 /var/run/docker.sock    # Fix socket permissions
+
+# "Port already in use"
+docker ps | grep :8080                 # Find conflicting container
+netstat -tulpn | grep :8080           # Check system processes
+docker run -p 8081:80 nginx           # Use different port
+
+# "No space left on device"
+docker system prune -a                 # Clean up Docker data
+df -h                                  # Check disk space
+docker system df                       # Check Docker space usage
+
+# Container exits immediately
+docker logs container_name             # Check exit reason
+docker run --rm -it image_name bash   # Debug interactively
+docker inspect image_name             # Check image configuration
+```
+
+## 📋 Quick Reference
+
+### Essential One-Liners
+```bash
+# Stop all containers
+docker stop $(docker ps -q)
+
+# Remove all containers
+docker rm $(docker ps -aq)
+
+# Remove all images
+docker rmi $(docker images -q)
+
+# Remove dangling images
+docker rmi $(docker images -f "dangling=true" -q)
+
+# Get container IP
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name
+
+# Get container logs with timestamps
+docker logs -t container_name
+
+# Monitor all container logs
+docker logs -f $(docker ps -q)
+
+# Copy files to/from container
+docker cp file.txt container_name:/path/to/destination
+docker cp container_name:/path/to/file.txt ./local/path
+
+# Execute command in all running containers
+docker ps -q | xargs -I {} docker exec {} command
+```
+
+### Resource Limits
+```bash
+# Memory limits
+docker run -m 512m nginx               # 512MB limit
+docker run --memory=1g nginx           # 1GB limit
+docker run --oom-kill-disable nginx    # Disable OOM killer
+
+# CPU limits
+docker run --cpus="1.5" nginx          # 1.5 CPU cores
+docker run --cpu-shares=512 nginx      # Relative CPU weight
+docker run --cpuset-cpus="0,1" nginx   # Specific CPU cores
+
+# Combined limits
+docker run -m 1g --cpus="2" nginx      # Memory + CPU limits
+```
+
+---
+
+*For more detailed guides, visit: [DevOps Troubleshooting Toolkit](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit)*

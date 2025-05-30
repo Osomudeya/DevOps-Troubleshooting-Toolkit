@@ -1,0 +1,452 @@
+# Networking Troubleshooting Cheatsheet
+*DevOps Troubleshooting Toolkit*
+
+## 🌐 Network Fundamentals
+
+### Network Information
+```bash
+# Interface information
+ip addr show               # Show all interfaces and IPs
+ip addr show eth0          # Show specific interface
+ip link show               # Show interface link status
+ip -s link show            # Show interface statistics
+ifconfig -a                # All interfaces (legacy)
+iwconfig                   # Wireless interfaces
+
+# MAC addresses
+ip link show | grep ether  # Show all MAC addresses
+cat /sys/class/net/eth0/address # Interface MAC address
+arp -a                     # ARP table (IP to MAC mappings)
+ip neigh show              # Neighbor table (modern)
+```
+
+### Routing Information
+```bash
+# Routing tables
+ip route show              # Show routing table
+ip route show table all    # Show all routing tables
+route -n                   # Routing table (legacy, numeric)
+netstat -rn                # Routing table (legacy)
+
+# Default gateway
+ip route | grep default    # Show default route
+route -n | grep '^0.0.0.0' # Default gateway (legacy)
+cat /proc/net/route        # Kernel routing table
+
+# Add/remove routes
+ip route add 192.168.2.0/24 via 192.168.1.1 # Add route
+ip route del 192.168.2.0/24 # Delete route
+ip route add default via 192.168.1.1 # Add default route
+```
+
+## 🔍 Network Testing & Diagnostics
+
+### Connectivity Testing
+```bash
+# Basic connectivity
+ping -c 4 8.8.8.8          # Ping Google DNS 4 times
+ping -c 4 -W 2 host        # Ping with 2-second timeout
+ping6 -c 4 host            # IPv6 ping
+ping -f host               # Flood ping (be careful!)
+ping -s 1472 host          # Large packet ping (MTU testing)
+
+# Advanced ping
+ping -i 0.2 host           # Ping every 0.2 seconds
+ping -M do -s 1472 host    # Don't fragment, test MTU
+hping3 -S -p 80 host       # TCP SYN ping to port 80
+fping -g 192.168.1.0/24    # Ping entire subnet
+```
+
+### Traceroute & Path Analysis
+```bash
+# Route tracing
+traceroute host            # Trace route to host
+traceroute -n host         # Numeric output (no DNS)
+traceroute -p 443 host     # Use specific port
+tracepath host             # Trace path (no root needed)
+mtr host                   # My traceroute (continuous)
+mtr -r -c 10 host          # Report mode, 10 cycles
+
+# Paris traceroute (consistent path)
+paris-traceroute host      # More accurate for load-balanced networks
+traceroute -I host         # Use ICMP instead of UDP
+```
+
+### DNS Troubleshooting
+```bash
+# DNS lookups
+nslookup domain.com        # Basic DNS lookup
+nslookup domain.com 8.8.8.8 # Query specific DNS server
+dig domain.com             # Detailed DNS lookup
+dig @8.8.8.8 domain.com    # Query specific server
+dig domain.com MX          # Mail exchange records
+dig domain.com NS          # Name server records
+dig domain.com TXT         # Text records
+dig -x 8.8.8.8             # Reverse DNS lookup
+
+# DNS debugging
+dig +trace domain.com      # Trace DNS resolution
+dig +short domain.com      # Short output
+dig +norecurse domain.com  # No recursion
+host domain.com            # Simple DNS lookup
+systemd-resolve --status   # DNS configuration (systemd)
+cat /etc/resolv.conf       # DNS configuration file
+```
+
+## 🔌 Port & Service Testing
+
+### Port Connectivity
+```bash
+# Port testing
+telnet host 80             # Test HTTP port
+nc -zv host 80             # Test port with netcat
+nc -zv host 1-1000         # Scan ports 1-1000
+nmap -p 80,443 host        # Scan specific ports
+nmap -p 1-1000 host        # Port range scan
+timeout 5 bash -c '</dev/tcp/host/port' # Bash TCP test
+
+# UDP testing
+nc -u host 53              # Test UDP port (DNS)
+nmap -sU -p 53 host        # UDP port scan
+dig @host domain.com       # Test DNS service
+```
+
+### Service Discovery
+```bash
+# Network scanning
+nmap -sn 192.168.1.0/24    # Ping scan (host discovery)
+nmap -sS host              # SYN scan (stealth)
+nmap -sV host              # Service version detection
+nmap -O host               # OS detection
+nmap -A host               # Aggressive scan (OS, version, script)
+nmap --top-ports 1000 host # Scan top 1000 ports
+
+# Service enumeration
+nmap -sC -sV host          # Default scripts + version detection
+nmap --script=banner host  # Banner grabbing
+nmap --script=vuln host    # Vulnerability scripts
+```
+
+## 🔧 Network Configuration
+
+### Interface Configuration
+```bash
+# Bring interfaces up/down
+ip link set eth0 up        # Bring interface up
+ip link set eth0 down      # Bring interface down
+ifup eth0                  # Bring interface up (legacy)
+ifdown eth0                # Bring interface down (legacy)
+
+# IP address management
+ip addr add 192.168.1.10/24 dev eth0 # Add IP address
+ip addr del 192.168.1.10/24 dev eth0 # Remove IP address
+ifconfig eth0 192.168.1.10 netmask 255.255.255.0 # Set IP (legacy)
+
+# DHCP
+dhclient eth0              # Request DHCP lease
+dhclient -r eth0           # Release DHCP lease
+dhclient -v eth0           # Verbose DHCP
+```
+
+### Network Services
+```bash
+# NetworkManager
+nmcli connection show      # Show connections
+nmcli device status        # Device status
+nmcli connection up/down id # Control connections
+nm-tool                    # NetworkManager tool
+
+# Traditional networking
+service networking restart # Restart networking (Debian)
+systemctl restart network  # Restart networking (RHEL)
+/etc/init.d/networking restart # SysV style
+
+# Wi-Fi
+iwlist scan                # Scan for Wi-Fi networks
+iwconfig wlan0 essid "SSID" # Connect to Wi-Fi
+wpa_supplicant -i wlan0 -c /etc/wpa_supplicant.conf
+```
+
+## 🔥 Firewall & Security
+
+### iptables
+```bash
+# View rules
+iptables -L                # List all rules
+iptables -L -n             # Numeric output
+iptables -L INPUT          # List INPUT chain
+iptables -L -v             # Verbose (with counters)
+iptables -S                # List rules in save format
+
+# Basic rules
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT # Allow SSH
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT # Allow HTTP
+iptables -A INPUT -j DROP  # Drop all other traffic
+iptables -I INPUT 1 -i lo -j ACCEPT # Allow loopback
+
+# Save/restore
+iptables-save > /etc/iptables/rules.v4 # Save rules
+iptables-restore < /etc/iptables/rules.v4 # Restore rules
+iptables -F                # Flush all rules
+```
+
+### UFW (Uncomplicated Firewall)
+```bash
+# UFW management
+ufw status                 # Show firewall status
+ufw enable                 # Enable firewall
+ufw disable                # Disable firewall
+ufw --dry-run enable       # Test changes
+
+# Rules
+ufw allow 22               # Allow SSH
+ufw allow 80/tcp           # Allow HTTP
+ufw allow from 192.168.1.0/24 # Allow from subnet
+ufw deny 23                # Deny telnet
+ufw delete allow 80        # Delete rule
+ufw reset                  # Reset to defaults
+```
+
+### firewalld (RHEL/CentOS)
+```bash
+# Basic commands
+firewall-cmd --state       # Check if running
+firewall-cmd --list-all    # List all settings
+firewall-cmd --get-zones   # List zones
+firewall-cmd --get-active-zones # Active zones
+
+# Rules
+firewall-cmd --add-service=http # Allow HTTP
+firewall-cmd --add-port=8080/tcp # Allow port 8080
+firewall-cmd --remove-service=http # Remove HTTP
+firewall-cmd --runtime-to-permanent # Make permanent
+firewall-cmd --reload      # Reload configuration
+```
+
+## 📊 Network Monitoring
+
+### Connection Monitoring
+```bash
+# Active connections
+ss -tuln                   # Show listening ports
+ss -tulpn                  # Show with process names
+ss -s                      # Summary statistics
+netstat -tuln              # Legacy version
+netstat -anp               # All connections with processes
+lsof -i                    # Network connections
+
+# Connection states
+ss -t state established    # Established TCP connections
+ss -t state listening      # Listening ports
+ss -t state time-wait      # TIME_WAIT connections
+```
+
+### Traffic Monitoring
+```bash
+# Interface statistics
+cat /proc/net/dev          # Interface statistics
+ip -s link show eth0       # Interface statistics
+iftop -i eth0              # Real-time interface traffic
+nethogs                    # Traffic by process
+iptraf-ng                  # Interactive network monitor
+nload eth0                 # Bandwidth monitor
+
+# Packet capture
+tcpdump -i eth0            # Capture packets
+tcpdump -i eth0 port 80    # Capture HTTP traffic
+tcpdump -i eth0 host 8.8.8.8 # Capture traffic to/from host
+tcpdump -i eth0 -w capture.pcap # Save to file
+tcpdump -r capture.pcap    # Read from file
+```
+
+### Bandwidth Testing
+```bash
+# iperf3 testing
+iperf3 -s                  # Server mode
+iperf3 -c server_ip        # Client mode
+iperf3 -c server_ip -t 30  # 30-second test
+iperf3 -c server_ip -u     # UDP test
+iperf3 -c server_ip -P 4   # 4 parallel streams
+
+# Other tools
+speedtest-cli              # Internet speed test
+wget -O /dev/null http://speedtest.com/file # Download test
+curl -o /dev/null http://speedtest.com/file # Download test
+```
+
+## 🌍 Advanced Networking
+
+### VLAN Configuration
+```bash
+# VLAN interfaces
+ip link add link eth0 name eth0.100 type vlan id 100
+ip addr add 192.168.100.1/24 dev eth0.100
+ip link set dev eth0.100 up
+ip link delete eth0.100    # Remove VLAN interface
+
+# Traditional VLAN
+vconfig add eth0 100       # Create VLAN 100
+ifconfig eth0.100 192.168.100.1 netmask 255.255.255.0
+vconfig rem eth0.100       # Remove VLAN
+```
+
+### Bonding/Teaming
+```bash
+# Network bonding
+modprobe bonding           # Load bonding module
+echo "+bond0" > /sys/class/net/bonding_masters
+echo "802.3ad" > /sys/class/net/bond0/bonding/mode
+echo "+eth0" > /sys/class/net/bond0/bonding/slaves
+echo "+eth1" > /sys/class/net/bond0/bonding/slaves
+
+# Team configuration (RHEL)
+teamd -t team0 -d -c '{"runner": {"name": "activebackup"}}'
+teamdctl team0 port add eth0
+teamdctl team0 port add eth1
+```
+
+### Network Namespaces
+```bash
+# Namespace management
+ip netns list              # List namespaces
+ip netns add ns1           # Create namespace
+ip netns exec ns1 bash     # Execute in namespace
+ip netns delete ns1        # Delete namespace
+
+# Interface assignment
+ip link set eth0 netns ns1 # Move interface to namespace
+ip netns exec ns1 ip addr add 192.168.1.1/24 dev eth0
+ip netns exec ns1 ip link set eth0 up
+```
+
+## 🚨 Troubleshooting Scenarios
+
+### Common Issues
+```bash
+# No network connectivity
+ping -c 1 127.0.0.1        # Test loopback
+ping -c 1 $(ip route | grep default | cut -d' ' -f3) # Test gateway
+ping -c 1 8.8.8.8          # Test external connectivity
+nslookup google.com        # Test DNS resolution
+
+# Slow network performance
+mtr -r -c 10 destination   # Check for packet loss/latency
+iperf3 -c server           # Test bandwidth
+ethtool eth0               # Check interface settings
+cat /proc/interrupts | grep eth0 # Check interrupt distribution
+
+# DNS issues
+dig @8.8.8.8 domain.com    # Test with external DNS
+cat /etc/resolv.conf       # Check DNS configuration
+systemd-resolve --status   # Check systemd-resolved
+nslookup domain.com        # Basic DNS test
+```
+
+### Port Issues
+```bash
+# Port not reachable
+telnet host port           # Test port connectivity
+nc -zv host port           # Alternative port test
+nmap -p port host          # Scan specific port
+ss -tlnp | grep :port      # Check if port is listening locally
+
+# Service binding issues
+ss -tlnp                   # Check what's listening
+netstat -tlnp              # Legacy version
+lsof -i :port              # What's using the port
+fuser -n tcp port          # Process using TCP port
+```
+
+## 📋 Quick Reference
+
+### Essential One-Liners
+```bash
+# Get public IP
+curl ifconfig.me
+curl ipinfo.io/ip
+dig +short myip.opendns.com @resolver1.opendns.com
+
+# Test internet connectivity
+ping -c 1 8.8.8.8 && echo "Internet OK" || echo "No Internet"
+
+# Find your gateway
+ip route | grep default | awk '{print $3}'
+
+# Check if port is open
+timeout 3 bash -c '</dev/tcp/host/port' && echo "Open" || echo "Closed"
+
+# Get all IPs in subnet
+nmap -sn 192.168.1.0/24 | grep -E "Nmap scan|Host is up"
+
+# Find processes using network
+lsof -i | grep LISTEN
+
+# Check network card speed
+ethtool eth0 | grep Speed
+
+# Monitor bandwidth usage
+watch -n 1 cat /proc/net/dev
+
+# Test MTU size
+ping -M do -s 1472 host
+
+# Check ARP table
+ip neigh show | grep REACHABLE
+
+# Find duplicate IPs
+arping -D -I eth0 192.168.1.100
+
+# Get DNS response time
+dig google.com | grep "Query time"
+
+# Check for packet loss
+ping -c 100 host | grep "packet loss"
+
+# Monitor dropped packets
+watch -n 1 'cat /proc/net/dev | grep eth0'
+
+# Test all common ports
+nmap --top-ports 100 host
+```
+
+### Protocol-Specific Testing
+```bash
+# HTTP/HTTPS
+curl -I http://website.com # HTTP headers
+curl -k https://website.com # Ignore SSL errors
+wget --spider http://website.com # Test without downloading
+openssl s_client -connect host:443 # Test SSL connection
+
+# SMTP
+telnet mail.server.com 25  # Test SMTP
+nc mail.server.com 25      # Alternative SMTP test
+
+# DNS
+dig @ns1.domain.com domain.com # Query specific nameserver
+dig domain.com ANY         # All record types
+nslookup -type=mx domain.com # Mail exchange records
+
+# SSH
+ssh -o ConnectTimeout=5 user@host # Quick SSH test
+nc -zv host 22             # Test SSH port
+```
+
+### Network Security
+```bash
+# Check for open ports
+nmap -sS localhost         # Scan own machine
+ss -tlnp | grep -v 127.0.0.1 # Non-loopback listeners
+
+# Monitor connections
+watch -n 1 'ss -tuln | grep LISTEN'
+netstat -anp | grep ESTABLISHED # Active connections
+
+# Check firewall
+iptables -L -n             # View iptables rules
+ufw status verbose         # UFW status
+firewall-cmd --list-all    # firewalld rules
+```
+
+---
+
+*For more detailed guides, visit: [DevOps Troubleshooting Toolkit](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit)*
