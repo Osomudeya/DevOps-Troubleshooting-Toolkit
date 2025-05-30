@@ -388,8 +388,8 @@ git push origin feature/new-troubleshooting-guide
 ## 📋 Resources
 
 ### Downloadable Materials
-- 📄 [DevOps Commands Cheatsheet](assets/cheatsheets/devops-commands.pdf)
-- 📊 [Troubleshooting Flowcharts](assets/cheatsheets/troubleshooting-flows.pdf)
+- 📄 [DevOps Commands Cheatsheet](assets/cheatsheets)
+<!-- - 📊 [Troubleshooting Flowcharts](assets/cheatsheets/troubleshooting-flows.pdf) -->
 
 ### External Resources
 - 🌐 [Linux Performance Tools](http://www.brendangregg.com/linuxperf.html)
