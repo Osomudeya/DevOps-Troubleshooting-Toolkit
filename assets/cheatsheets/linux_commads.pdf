@@ -1,0 +1,436 @@
+# Linux Commands Cheatsheet
+*DevOps Troubleshooting Toolkit*
+
+## 🖥️ System Information
+
+### System Overview
+```bash
+# System information
+uname -a                    # System information
+hostnamectl                 # System hostname and info
+uptime                      # System uptime and load
+who                         # Logged in users
+w                          # Detailed user activity
+last                       # Login history
+id                         # Current user and group IDs
+whoami                     # Current username
+
+# Hardware information
+lscpu                      # CPU information
+lsblk                      # Block devices
+lshw                       # Hardware configuration
+lspci                      # PCI devices
+lsusb                      # USB devices
+dmidecode                  # Hardware information from BIOS
+free -h                    # Memory usage
+df -h                      # Disk space usage
+```
+
+### System Resources
+```bash
+# CPU and load
+top                        # Real-time process monitor
+htop                       # Enhanced process monitor
+uptime                     # Load averages
+cat /proc/loadavg          # Load averages file
+nproc                      # Number of processors
+cat /proc/cpuinfo          # CPU details
+
+# Memory
+free -h                    # Memory usage (human readable)
+cat /proc/meminfo          # Detailed memory information
+vmstat 1 5                 # Virtual memory statistics
+sar -r 1 5                 # Memory usage over time
+
+# Disk usage
+df -h                      # Disk space usage
+du -sh /*                  # Directory sizes
+du -sh ./*                 # Current directory sizes
+ncdu                       # Interactive disk usage analyzer
+iotop                      # I/O monitoring
+iostat -x 1 5              # I/O statistics
+```
+
+## 🔍 Process Management
+
+### Process Monitoring
+```bash
+# Process listing
+ps aux                     # All processes
+ps -ef                     # Full format listing
+ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem # Custom format
+pstree                     # Process tree
+pgrep process_name         # Find process by name
+pidof process_name         # Get PID of process
+
+# Process details
+top -p PID                 # Monitor specific process
+ps -p PID -o pid,ppid,cmd,etime # Process details
+cat /proc/PID/status       # Process status
+cat /proc/PID/cmdline      # Process command line
+lsof -p PID                # Files opened by process
+```
+
+### Process Control
+```bash
+# Start/Stop processes
+nohup command &            # Run command in background
+jobs                       # List background jobs
+fg %1                      # Bring job to foreground
+bg %1                      # Send job to background
+disown %1                  # Detach job from shell
+
+# Kill processes
+kill PID                   # Terminate process
+kill -9 PID                # Force kill process
+killall process_name       # Kill all instances
+pkill -f pattern           # Kill by pattern
+kill -TERM PID             # Graceful termination
+kill -HUP PID              # Reload configuration
+```
+
+### System Services
+```bash
+# SystemD services
+systemctl status service   # Service status
+systemctl start service    # Start service
+systemctl stop service     # Stop service
+systemctl restart service  # Restart service
+systemctl reload service   # Reload service config
+systemctl enable service   # Enable at boot
+systemctl disable service  # Disable at boot
+systemctl list-units       # List all units
+systemctl --failed         # Failed services
+
+# Service logs
+journalctl -u service      # Service logs
+journalctl -f -u service   # Follow service logs
+journalctl --since "1 hour ago" # Recent logs
+journalctl --until "2023-01-01" # Logs until date
+```
+
+## 🌐 Network Troubleshooting
+
+### Network Information
+```bash
+# Interface information
+ip addr show               # IP addresses
+ip link show               # Network interfaces
+ifconfig                   # Interface configuration (legacy)
+iwconfig                   # Wireless interface info
+ip route show              # Routing table
+route -n                   # Routing table (legacy)
+
+# Network statistics
+ss -tuln                   # Socket statistics
+netstat -tuln              # Network connections (legacy)
+ss -p                      # Show processes using sockets
+netstat -anp               # All connections with processes
+lsof -i                    # Network connections
+lsof -i :80                # Connections on port 80
+```
+
+### Connectivity Testing
+```bash
+# Basic connectivity
+ping host                  # Test connectivity
+ping -c 4 host             # Ping 4 times
+ping6 host                 # IPv6 ping
+traceroute host            # Trace route to host
+tracepath host             # Trace path (no root needed)
+mtr host                   # My traceroute (continuous)
+
+# Port testing
+telnet host port           # Test port connectivity
+nc -zv host port           # Test port with netcat
+nc -l 8080                 # Listen on port 8080
+nmap -p 80,443 host        # Port scanning
+
+# DNS testing
+nslookup domain            # DNS lookup
+dig domain                 # DNS lookup (detailed)
+dig @8.8.8.8 domain        # Query specific DNS server
+host domain                # Simple DNS lookup
+```
+
+### Network Configuration
+```bash
+# IP configuration
+ip addr add 192.168.1.10/24 dev eth0 # Add IP address
+ip addr del 192.168.1.10/24 dev eth0 # Remove IP address
+ip link set eth0 up        # Bring interface up
+ip link set eth0 down      # Bring interface down
+
+# Routing
+ip route add default via 192.168.1.1 # Add default route
+ip route add 10.0.0.0/8 via 192.168.1.1 # Add specific route
+ip route del 10.0.0.0/8   # Delete route
+
+# Firewall (iptables)
+iptables -L                # List rules
+iptables -L -n             # List rules (numeric)
+iptables -F                # Flush all rules
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT # Allow SSH
+```
+
+## 📁 File System Operations
+
+### File Operations
+```bash
+# Basic file operations
+ls -la                     # List files (detailed)
+ls -lh                     # List with human readable sizes
+find /path -name "*.log"   # Find files by name
+find /path -type f -size +100M # Find large files
+find /path -mtime -7       # Files modified in last 7 days
+locate filename            # Quick file search
+which command              # Find command location
+whereis command            # Find command and manual
+
+# File permissions
+chmod 755 file             # Change permissions
+chmod +x file              # Make executable
+chown user:group file      # Change ownership
+chgrp group file           # Change group
+umask                      # Default permissions mask
+```
+
+### File Content
+```bash
+# View file content
+cat file                   # Display file
+less file                  # Page through file
+head -n 20 file            # First 20 lines
+tail -n 20 file            # Last 20 lines
+tail -f file               # Follow file changes
+grep pattern file          # Search in file
+grep -r pattern dir        # Recursive search
+awk '{print $1}' file      # Print first column
+sed 's/old/new/g' file     # Replace text
+```
+
+### File System Information
+```bash
+# Disk usage
+df -h                      # File system usage
+df -i                      # Inode usage
+du -sh directory           # Directory size
+du -h --max-depth=1        # Subdirectory sizes
+lsof +D /path              # Files open in directory
+fuser -v /path             # Processes using path
+
+# File system operations
+mount                      # Show mounted file systems
+mount /dev/sdb1 /mnt       # Mount device
+umount /mnt                # Unmount
+fsck /dev/sdb1             # Check file system
+mkfs.ext4 /dev/sdb1        # Create file system
+```
+
+## 🔒 Security & Permissions
+
+### User Management
+```bash
+# User information
+id username                # User ID and groups
+groups username            # User groups
+passwd username            # Change password
+su - username              # Switch user
+sudo command               # Run as root
+sudo -u user command       # Run as specific user
+visudo                     # Edit sudoers file
+
+# User accounts
+useradd username           # Add user
+usermod -aG group user     # Add user to group
+userdel username           # Delete user
+passwd -l username         # Lock user account
+passwd -u username         # Unlock user account
+chage -l username          # Password aging info
+```
+
+### File Permissions & Security
+```bash
+# Advanced permissions
+setfacl -m u:user:rwx file # Set ACL
+getfacl file               # Get ACL
+chmod +t directory         # Set sticky bit
+chmod +s file              # Set setuid bit
+lsattr file                # List file attributes
+chattr +i file             # Make file immutable
+
+# Security scanning
+find / -perm -4000         # Find setuid files
+find / -perm -2000         # Find setgid files
+find / -type f -perm 777   # Find world-writable files
+netstat -tuln              # Check listening ports
+ps aux | grep root         # Root processes
+```
+
+## 📊 Performance Monitoring
+
+### System Performance
+```bash
+# Real-time monitoring
+top                        # Process monitor
+htop                       # Enhanced process monitor
+iotop                      # I/O monitor
+nethogs                    # Network usage by process
+iftop                      # Network interface monitor
+watch -n 1 command         # Repeat command every second
+
+# Historical data
+sar -u 1 5                 # CPU usage
+sar -r 1 5                 # Memory usage
+sar -d 1 5                 # Disk activity
+sar -n DEV 1 5             # Network activity
+vmstat 1 5                 # Virtual memory stats
+iostat -x 1 5              # I/O statistics
+```
+
+### Log Analysis
+```bash
+# System logs
+journalctl                 # SystemD logs
+journalctl -f              # Follow logs
+journalctl --since today   # Today's logs
+journalctl -u service      # Service-specific logs
+dmesg                      # Kernel messages
+dmesg | grep -i error      # Kernel errors
+
+# Log files
+tail -f /var/log/syslog    # System log
+tail -f /var/log/auth.log  # Authentication log
+tail -f /var/log/apache2/access.log # Web server log
+grep "ERROR" /var/log/app.log # Search for errors
+awk '{print $1}' /var/log/access.log | sort | uniq -c # Count IPs
+```
+
+## 🔧 System Administration
+
+### Package Management (Ubuntu/Debian)
+```bash
+# APT operations
+apt update                 # Update package list
+apt upgrade                # Upgrade packages
+apt install package        # Install package
+apt remove package         # Remove package
+apt purge package          # Remove package and config
+apt search keyword         # Search packages
+apt show package           # Package information
+apt list --installed       # List installed packages
+
+# Package files
+dpkg -l                    # List installed packages
+dpkg -L package            # List package files
+dpkg -S file               # Find package owning file
+apt-file search file       # Find package containing file
+```
+
+### Package Management (RHEL/CentOS)
+```bash
+# YUM/DNF operations
+yum update                 # Update packages
+yum install package        # Install package
+yum remove package         # Remove package
+yum search keyword         # Search packages
+yum info package           # Package information
+yum list installed         # List installed packages
+
+# RPM operations
+rpm -qa                    # List installed packages
+rpm -ql package            # List package files
+rpm -qf file               # Find package owning file
+rpm -qi package            # Package information
+```
+
+### Archive Operations
+```bash
+# Tar archives
+tar -czf archive.tar.gz dir # Create compressed archive
+tar -xzf archive.tar.gz     # Extract compressed archive
+tar -tzf archive.tar.gz     # List archive contents
+tar -xzf archive.tar.gz -C /path # Extract to specific directory
+
+# Other archives
+zip -r archive.zip dir      # Create zip archive
+unzip archive.zip           # Extract zip archive
+gunzip file.gz              # Decompress gzip file
+gzip file                   # Compress file with gzip
+```
+
+## 📋 Quick Reference
+
+### Essential One-Liners
+```bash
+# Find large files
+find / -type f -size +100M -exec ls -lh {} \; 2>/dev/null
+
+# Find processes using most CPU
+ps aux --sort=-%cpu | head -10
+
+# Find processes using most memory
+ps aux --sort=-%mem | head -10
+
+# Check disk I/O
+iostat -x 1 | grep -v '^$'
+
+# Monitor log file for errors
+tail -f /var/log/syslog | grep -i error
+
+# Find files modified in last 24 hours
+find /var/log -type f -mtime -1
+
+# Check network connections
+ss -tuln | grep :80
+
+# Find open files by process
+lsof -p $(pgrep process_name)
+
+# Check memory usage by process
+ps -eo pid,ppid,cmd,pmem --sort=-pmem | head -10
+
+# Find zombie processes
+ps aux | awk '$8 ~ /^Z/ { print $2 }'
+
+# Check swap usage
+swapon -s && cat /proc/swaps
+
+# Find world-writable directories
+find / -type d -perm -002 2>/dev/null
+
+# Check failed login attempts
+grep "Failed password" /var/log/auth.log | tail -10
+
+# Monitor real-time network connections
+watch -n 1 'ss -tuln'
+
+# Find recently modified files
+find /etc -type f -mmin -60 2>/dev/null
+```
+
+### System Recovery
+```bash
+# Boot issues
+mount -o remount,rw /      # Remount root as read-write
+fsck /dev/sda1             # Check file system
+e2fsck -f /dev/sda1        # Force check ext filesystem
+grub-install /dev/sda      # Reinstall GRUB
+update-grub                # Update GRUB configuration
+
+# Service issues
+systemctl --failed         # Check failed services
+systemctl reset-failed     # Reset failed state
+journalctl -p err          # Check error logs
+systemctl daemon-reload    # Reload systemd configuration
+
+# Network issues
+ip link set eth0 down && ip link set eth0 up # Reset interface
+dhclient eth0              # Renew DHCP lease
+systemctl restart networking # Restart network service
+netplan apply              # Apply network configuration (Ubuntu)
+```
+
+---
+
+*For more detailed guides, visit: [DevOps Troubleshooting Toolkit](https://github.com/Osomudeya/DevOps-Troubleshooting-Toolkit)*
